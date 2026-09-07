@@ -1,0 +1,11 @@
+{
+  "model_name": "intensity_regressor",
+  "version": "v0.1",
+  "trained_on": "2026-09-07",
+  "train_samples": 80,
+  "val_mae_kmh": 86.96,
+  "data_source": "TCIR-Bootstrap-Sample",
+  "channels": [
+    "IR"
+  ]
+}

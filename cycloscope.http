@@ -1,0 +1,147 @@
+### Cycloscope Integration Test Collection
+### Format: VS Code "REST Client" extension (each ### block is one request).
+### To use in Postman instead: File → Import → this file (Postman reads .http/.rest files directly).
+###
+### Run top to bottom. Start services first: MongoDB → backend → ml/serving → frontend.
+### See INTEGRATION_TEST.md in the project root for expected results and pass/fail criteria per step.
+
+@backendUrl = http://localhost:5000/api
+@mlUrl = http://localhost:8000
+@cycloneId = IO_2026_TEST
+@sessionId = test-session-001
+
+### ============================================================
+### STEP 0 — ML service reachable directly (sanity check before backend)
+### ============================================================
+
+### 0a. ML health check
+GET {{mlUrl}}/health
+
+### 0b. ML intensity predict (manual test image — replace with a real base64 IR patch)
+# POST {{mlUrl}}/predict/intensity
+# Content-Type: application/json
+#
+# {
+#   "cyclone_id": "{{cycloneId}}",
+#   "image_base64": "<base64-encoded test IR frame>",
+#   "channel": "IR"
+# }
+
+### ============================================================
+### STEP 1 — Backend health (Mongo connection + process up)
+### ============================================================
+
+GET {{backendUrl}}/system/health
+
+### Expected: 200, { "status": "ok" } or equivalent, no Mongo connection errors in backend logs.
+
+### ============================================================
+### STEP 2 — Backend can reach the ML service
+### ============================================================
+
+GET {{backendUrl}}/system/ml-status
+
+### Expected: 200, indicates "live" (ML reachable) — not "fallback" — assuming ml/serving is running.
+
+### ============================================================
+### STEP 3 — Seed a test cyclone before triggering predictions
+### ============================================================
+### Run this in mongosh (not an HTTP call) against your MONGODB_URI, once, before Step 4:
+#
+# db.cyclones.insertOne({
+#   cycloneId: "IO_2026_TEST",
+#   name: "Test Storm",
+#   basin: "Bay of Bengal",
+#   season: 2026,
+#   status: "active",
+#   currentCategory: "Cyclonic Storm",
+#   currentWindSpeedKmh: 85,
+#   currentPressureHpa: 995,
+#   lastUpdated: new Date(),
+#   currentLocation: { lat: 15.0, lon: 88.0 },
+#   source: "live-feed"
+# });
+#
+# db.climatologyprofiles.insertOne({
+#   basin: "Bay of Bengal",
+#   month: new Date().getMonth() + 1,
+#   avgWindSpeedKmh: 90,
+#   avgPressureHpa: 990,
+#   avgTrackBearingDeg: 315,
+#   avgTrackSpeedKmh: 15,
+#   sampleSize: 42
+# });
+### The ClimatologyProfile row is required for Step 5 (fallback path) to return a real estimate
+### instead of erroring — without it, fallbackService.js has nothing to look up.
+
+### ============================================================
+### STEP 4 — Full live chain: backend -> ML -> Mongo -> readable back
+### ============================================================
+
+### 4a. Trigger a refresh (this is what the 6h scheduler calls internally, on demand)
+POST {{backendUrl}}/predictions/{{cycloneId}}/refresh
+
+### Expected: 200, body has "source": "ml-model", a "modelVersion", detection/intensity/trackForecast populated.
+
+### 4b. Read it back
+GET {{backendUrl}}/predictions/{{cycloneId}}/latest
+
+### Expected: same PredictionResult just written, persisted in Mongo.
+
+### ============================================================
+### STEP 5 — Fallback path: stop ml/serving, then repeat Step 4a
+### ============================================================
+### Manual step: kill the ML service process now, then re-send this request.
+
+POST {{backendUrl}}/predictions/{{cycloneId}}/refresh
+
+### Expected: 200 (NOT an error to the client), body has:
+###   "source": "fallback-climatology"
+###   "fallbackReason": "ingestion-failure" or "model-failure"
+###   wider "uncertaintyRadiusKm" than the live-model response from Step 4a
+### Also check: an AlertLog entry was written with the same fallbackReason.
+### Restart ml/serving before continuing to Step 6.
+
+### ============================================================
+### STEP 6 — Frontend-facing reads (what the dashboard actually calls)
+### ============================================================
+
+### 6a. Active systems list (Dashboard screen)
+GET {{backendUrl}}/cyclones/active
+
+### 6b. Single cyclone detail (Cyclone Detail View)
+GET {{backendUrl}}/cyclones/{{cycloneId}}
+
+### Expected: both return data consistent with Steps 4/5 — confirms the frontend has real
+### data to render, not just the backend having it. Load the actual frontend dashboard now
+### and confirm: risk badge shows, uncertainty cone renders, and the amber fallback banner
+### appeared during Step 5's window (check PredictionResult.source on that specific record).
+
+### ============================================================
+### STEP 7 — RAG chatbot end-to-end
+### ============================================================
+
+POST {{backendUrl}}/chat/{{sessionId}}/message
+Content-Type: application/json
+
+{
+  "message": "What's the current status of the test storm near Bay of Bengal?"
+}
+
+### Expected: 200, grounded answer referencing the seeded cyclone's data (not a generic/fabricated
+### answer), response is tagged for the frontend's "AI-generated, verify with IMD" label.
+
+### 7b. Confirm it persisted
+GET {{backendUrl}}/chat/{{sessionId}}/history
+
+### Expected: both the user message and assistant response present, with retrievedContextIds populated.
+
+### ============================================================
+### CLEANUP — remove test data when done
+### ============================================================
+### mongosh:
+# db.cyclones.deleteOne({ cycloneId: "IO_2026_TEST" });
+# db.predictionresults.deleteMany({ cycloneId: "IO_2026_TEST" });
+# db.trackpoints.deleteMany({ cycloneId: "IO_2026_TEST" });
+# db.alertlogs.deleteMany({ cycloneId: "IO_2026_TEST" });
+# db.chatsessions.deleteOne({ sessionId: "test-session-001" });
