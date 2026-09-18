@@ -206,11 +206,13 @@ MOSDAC_PRODUCT=3D_IMG_L1B_STD
 
 ## 📊 Scientific Model Validation Metrics
 
+> 📖 **For in-depth analysis, loss curves, feature importances, and historical benchmark backtesting breakdowns across NIO cyclones (Fani, Amphan, Tauktae, Biparjoy), see [METRICS_AND_EVALUATION.md](METRICS_AND_EVALUATION.md).**
+
 | Model | Architecture | Target | Key Validation Metric |
 | :--- | :--- | :--- | :--- |
-| **Intensity Regressor** | ResNet-18 CNN (`best.pt`) | Wind Speed (km/h) | $\text{MAE} = 8.38\text{ km/h}$, Category Accuracy: `83.98%` |
+| **Intensity Regressor** | ResNet-18 CNN (`best.pt`) | Wind Speed (km/h) | $\text{MAE} = 8.38\text{ km/h}$, Category Accuracy: `83.98%` (Test Split $\text{MAE} = 0.55\text{ km/h}$) |
 | **Track Forecaster** | Temporal LSTM (`track_best.pt`) | Coordinates (+6h to +48h) | +6h $\text{MAE} = 76.87\text{ km}$, +12h $\text{MAE} = 149.58\text{ km}$ |
-| **Cyclogenesis Model** | Calibrated Random Forest (`cyclogenesis_model.joblib`) | 48h Genesis Risk | $\text{ROC-AUC} = 0.8176$, $\text{F1-Score} = 79.80\%$ |
+| **Cyclogenesis Model** | Calibrated Random Forest (`cyclogenesis_model.joblib`) | 48h Genesis Risk | $\text{ROC-AUC} = 0.8163$, $\text{F1-Score} = 79.77\%$ (Accuracy: `80.08%`) |
 
 ---
 
