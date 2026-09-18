@@ -1,6 +1,13 @@
+import sys
+from pathlib import Path
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import List, Optional
+
+ML_ROOT = Path(__file__).resolve().parents[3]
+sys.path.append(str(ML_ROOT))
+
+from serving.app.inference.track_infer import predict_storm_track
 
 router = APIRouter(prefix="/predict", tags=["Track Forecasting"])
 
@@ -24,34 +31,32 @@ class TrackPredictionResponse(BaseModel):
 @router.post("/track", response_model=TrackPredictionResponse)
 def predict_track(req: TrackPredictionRequest):
     """
-    Produces +6h, +12h, and +24h forecast points along the projected cyclone trajectory.
+    Produces multi-horizon forecast points along the projected cyclone trajectory using PyTorch TrackForecaster.
     """
     try:
-        # Extrapolates storm progression with north-westward bias typical for North Indian Ocean
-        forecast = [
+        res = predict_storm_track(
+            cyclone_id=req.cyclone_id,
+            current_lat=req.current_lat,
+            current_lon=req.current_lon,
+            current_wind_kmh=req.current_wind_kmh or 65.0,
+            mode="live"
+        )
+        
+        forecast_pts = [
             TrackPointForecast(
-                lead_time_hours=6,
-                lat=round(req.current_lat + 0.35, 2),
-                lon=round(req.current_lon - 0.25, 2),
-                wind_speed_kmh=round(req.current_wind_kmh + 2.0, 1)
-            ),
-            TrackPointForecast(
-                lead_time_hours=12,
-                lat=round(req.current_lat + 0.70, 2),
-                lon=round(req.current_lon - 0.55, 2),
-                wind_speed_kmh=round(max(0.0, req.current_wind_kmh - 5.0), 1)
-            ),
-            TrackPointForecast(
-                lead_time_hours=24,
-                lat=round(req.current_lat + 1.45, 2),
-                lon=round(req.current_lon - 1.15, 2),
-                wind_speed_kmh=round(max(0.0, req.current_wind_kmh - 20.0), 1)
+                lead_time_hours=pt["lead_time_hours"],
+                lat=pt["lat"],
+                lon=pt["lon"],
+                wind_speed_kmh=pt["wind_speed_kmh"]
             )
+            for pt in res["forecast"]
         ]
+        
         return TrackPredictionResponse(
             cyclone_id=req.cyclone_id,
-            forecast=forecast,
-            model_version="v0.1"
+            forecast=forecast_pts,
+            model_version=res["model_version"]
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Track prediction error: {str(e)}")
+

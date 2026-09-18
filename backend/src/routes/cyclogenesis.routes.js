@@ -13,5 +13,6 @@ const cyclogenesisController = require('../controllers/cyclogenesis.controller')
  *         description: List of candidate disturbances
  */
 router.get('/watch', cyclogenesisController.getCyclogenesisWatch);
+router.get('/risk-map', cyclogenesisController.getCyclogenesisWatch);
 
 module.exports = router;

@@ -1,0 +1,150 @@
+{
+  "info": {
+    "_postman_id": "cycloscope-integration-tests",
+    "name": "Cycloscope Integration Tests",
+    "description": "Full end-to-end integration test collection for Cycloscope (Backend, ML Service, Predictions, and RAG Chatbot)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Step 0 - ML Service Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Step 1 - Backend & Database Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/system/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "system", "health"]
+        }
+      }
+    },
+    {
+      "name": "Step 2 - Backend ML Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/system/ml-status",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "system", "ml-status"]
+        }
+      }
+    },
+    {
+      "name": "Step 4a - Trigger Live Prediction (IO_2026_TEST)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5000/api/predictions/IO_2026_TEST/refresh",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "predictions", "IO_2026_TEST", "refresh"]
+        }
+      }
+    },
+    {
+      "name": "Step 4b - Get Latest Prediction (IO_2026_TEST)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/predictions/IO_2026_TEST/latest",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "predictions", "IO_2026_TEST", "latest"]
+        }
+      }
+    },
+    {
+      "name": "Step 6a - Get Active Cyclones (Dashboard)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/cyclones/active",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "cyclones", "active"]
+        }
+      }
+    },
+    {
+      "name": "Step 6b - Get Cyclone Detail (IO_2026_TEST)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/cyclones/IO_2026_TEST",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "cyclones", "IO_2026_TEST"]
+        }
+      }
+    },
+    {
+      "name": "Step 7a - RAG Chatbot Message",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"What is the current status and intensity of the test storm near Bay of Bengal?\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/chat/test-session-001/message",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "chat", "test-session-001", "message"]
+        }
+      }
+    },
+    {
+      "name": "Step 7b - RAG Chatbot History",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/chat/test-session-001/history",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "chat", "test-session-001", "history"]
+        }
+      }
+    }
+  ]
+}

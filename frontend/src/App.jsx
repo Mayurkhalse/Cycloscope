@@ -21,7 +21,7 @@ export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <div className="flex flex-col min-h-screen bg-ocean-950 text-slate-100 selection:bg-cyan-500 selection:text-white">
+        <div className="flex flex-col min-h-screen bg-slate-50 text-slate-800 selection:bg-ocean-500 selection:text-white">
           <DisclaimerBanner />
           <Navbar />
           <Sidebar />

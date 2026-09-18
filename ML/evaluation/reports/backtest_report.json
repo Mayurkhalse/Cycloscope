@@ -1,0 +1,87 @@
+{
+  "evaluation_timestamp": "2026-09-08T07:42:12.741910",
+  "evaluation_dataset": "IBTrACS North Indian Ocean (1842-2024)",
+  "model_versions_evaluated": {
+    "intensity_model": "IntensityRegressor v0.1 (ResNet-18)",
+    "track_forecaster": "TrackForecaster v0.1-LSTM (Temporal LSTM + Embeddings)",
+    "cyclogenesis_model": "Calibrated Random Forest v0.1-RF"
+  },
+  "track_metrics": {
+    "horizon_6h": {
+      "mae_km": 76.87,
+      "rmse_km": 78.42,
+      "median_km": 77.39,
+      "samples": 206
+    },
+    "horizon_12h": {
+      "mae_km": 149.58,
+      "rmse_km": 152.59,
+      "median_km": 153.97,
+      "samples": 206
+    },
+    "horizon_24h": {
+      "mae_km": 305.88,
+      "rmse_km": 311.16,
+      "median_km": 312.77,
+      "samples": 206
+    },
+    "horizon_48h": {
+      "mae_km": 551.35,
+      "rmse_km": 562.14,
+      "median_km": 558.85,
+      "samples": 206
+    }
+  },
+  "intensity_metrics": {
+    "mae_kmh": 8.38,
+    "rmse_kmh": 10.82,
+    "category_classification_accuracy": 83.98,
+    "samples": 206
+  },
+  "storm_breakdown": [
+    {
+      "cyclone_name": "FANI",
+      "season": 2019,
+      "basin": "Bay of Bengal",
+      "observations_tested": 59,
+      "mean_track_error_6h_km": 69.4,
+      "mean_track_error_12h_km": 136.0,
+      "mean_track_error_24h_km": 277.7,
+      "mean_track_error_48h_km": 501.3,
+      "mean_intensity_mae_kmh": 9.1
+    },
+    {
+      "cyclone_name": "AMPHAN",
+      "season": 2020,
+      "basin": "Bay of Bengal",
+      "observations_tested": 39,
+      "mean_track_error_6h_km": 79.3,
+      "mean_track_error_12h_km": 154.2,
+      "mean_track_error_24h_km": 316.2,
+      "mean_track_error_48h_km": 570.3,
+      "mean_intensity_mae_kmh": 9.7
+    },
+    {
+      "cyclone_name": "TAUKTAE",
+      "season": 2021,
+      "basin": "Arabian Sea",
+      "observations_tested": 37,
+      "mean_track_error_6h_km": 72.1,
+      "mean_track_error_12h_km": 141.0,
+      "mean_track_error_24h_km": 285.9,
+      "mean_track_error_48h_km": 508.4,
+      "mean_intensity_mae_kmh": 11.3
+    },
+    {
+      "cyclone_name": "BIPARJOY",
+      "season": 2023,
+      "basin": "Arabian Sea",
+      "observations_tested": 71,
+      "mean_track_error_6h_km": 84.2,
+      "mean_track_error_12h_km": 162.8,
+      "mean_track_error_24h_km": 334.0,
+      "mean_track_error_48h_km": 605.0,
+      "mean_intensity_mae_kmh": 5.5
+    }
+  ]
+}

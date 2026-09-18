@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 export const useUIStore = create((set) => ({
-  selectedCycloneId: 'cyclone-tej-2026',
+  selectedCycloneId: 'IO_2026_03',
   setSelectedCycloneId: (id) => set({ selectedCycloneId: id }),
 
   isSidebarOpen: false,
@@ -22,6 +22,9 @@ export const useUIStore = create((set) => ({
   },
   setMapViewport: (center, zoom) => set({ mapViewport: { center, zoom } }),
 
+  systemMode: 'live', // 'live' | 'replay'
+  setSystemMode: (mode) => set({ systemMode: mode }),
+
   historicalFilters: {
     yearRange: [2015, 2026],
     basin: 'All',
@@ -33,3 +36,4 @@ export const useUIStore = create((set) => ({
       historicalFilters: { ...state.historicalFilters, ...newFilters },
     })),
 }));
+

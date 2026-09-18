@@ -21,6 +21,26 @@ class IntensityRegressor(nn.Module):
         num_features = self.backbone.fc.in_features
         self.backbone.fc = nn.Linear(num_features, 1)
 
+    def extract_features(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Extracts 512-dimensional penultimate feature embeddings from ResNet-18 backbone.
+        Returns: (B, 512) tensor.
+        """
+        x = self.backbone.conv1(x)
+        x = self.backbone.bn1(x)
+        x = self.backbone.relu(x)
+        x = self.backbone.maxpool(x)
+
+        x = self.backbone.layer1(x)
+        x = self.backbone.layer2(x)
+        x = self.backbone.layer3(x)
+        x = self.backbone.layer4(x)
+
+        x = self.backbone.avgpool(x)
+        x = torch.flatten(x, 1)
+        return x
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # Returns shape (B,)
         return self.backbone(x).squeeze(-1)
+

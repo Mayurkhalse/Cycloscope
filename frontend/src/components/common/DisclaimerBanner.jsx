@@ -7,38 +7,38 @@ export const DisclaimerBanner = () => {
 
   if (disclaimerDismissedSession) {
     return (
-      <div className="bg-amber-950/40 border-b border-amber-500/20 px-4 py-1.5 flex items-center justify-between text-xs text-amber-300">
+      <div className="bg-amber-50/90 border-b border-amber-200/80 px-4 py-1.5 flex items-center justify-between text-xs text-amber-800">
         <div className="flex items-center gap-2">
-          <Info className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-          <span><strong>Official Disclaimer:</strong> AI Decision Support Tool — Supplements, never replaces, IMD bulletins.</span>
+          <Info className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+          <span><strong>Official Disclaimer:</strong> AI Decision Support Tool — Supplements, never replaces, official IMD bulletins.</span>
         </div>
-        <a href="/about" className="underline hover:text-amber-200">Read Methodology</a>
+        <a href="/about" className="underline font-semibold hover:text-amber-950">Read Methodology</a>
       </div>
     );
   }
 
   return (
-    <div className="bg-gradient-to-r from-amber-950/90 via-amber-900/80 to-amber-950/90 border-b border-amber-500/40 px-4 py-2.5 text-amber-200 text-xs sm:text-sm backdrop-blur-md transition-all shadow-md">
+    <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 text-white px-4 py-2 text-xs sm:text-sm shadow-sm transition-all">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="p-1.5 bg-amber-500/20 rounded-lg text-amber-400 shrink-0">
-            <AlertTriangle className="w-4 h-4 animate-pulse" />
+        <div className="flex items-center gap-2.5">
+          <div className="p-1 bg-white/20 rounded-md text-white shrink-0">
+            <AlertTriangle className="w-4 h-4" />
           </div>
-          <div>
-            <span className="font-semibold text-amber-100">IMPORTANT NOTICE:</span>{' '}
-            This system provides experimental AI-driven satellite track & intensity estimates for the North Indian Ocean. It is designed purely as a <strong>decision-support tool</strong> to supplement — and <strong>never replace</strong> — official advisories issued by the <strong>India Meteorological Department (IMD)</strong>.
+          <div className="leading-snug">
+            <span className="font-extrabold uppercase tracking-wide">Official Notice:</span>{' '}
+            AI-driven decision-support tool. Designed to supplement — and <strong>never replace</strong> — official advisories from the <strong>India Meteorological Department (IMD)</strong>.
           </div>
         </div>
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2.5 shrink-0">
           <a
             href="/about"
-            className="px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded text-xs transition"
+            className="px-2.5 py-1 bg-white/20 hover:bg-white/30 text-white font-semibold rounded text-xs transition border border-white/30"
           >
             Methodology
           </a>
           <button
             onClick={dismissDisclaimer}
-            className="p-1 hover:bg-amber-800/50 rounded text-amber-400 hover:text-white transition"
+            className="p-1 hover:bg-white/20 rounded text-white transition"
             title="Minimize for session"
           >
             <X className="w-4 h-4" />

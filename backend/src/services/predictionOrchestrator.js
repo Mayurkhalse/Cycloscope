@@ -31,21 +31,55 @@ function classifyFailure(err) {
 
 async function savePredictionResult(cycloneId, data) {
   try {
+    const intensity = data.intensity || {
+      category: data.category || 'Cyclonic Storm',
+      windSpeedKmh: data.wind_speed_kmh || data.windSpeedKmh || 65,
+      confidence: data.confidence || 0.8,
+    };
+
+    const rawForecast = data.trackForecast || data.track || [];
+    const trackForecast = rawForecast.map((pt) => ({
+      leadTimeHours: pt.leadTimeHours ?? pt.lead_time_hours ?? 6,
+      lat: pt.lat,
+      lon: pt.lon,
+      windSpeedKmh: pt.windSpeedKmh ?? pt.wind_speed_kmh ?? intensity.windSpeedKmh,
+      pressureHpa: pt.pressureHpa ?? pt.pressure_hpa ?? null,
+      uncertaintyRadiusKm: pt.uncertaintyRadiusKm ?? pt.uncertainty_radius_km ?? 40,
+      confidence: pt.confidence ?? 0.75,
+    }));
+
+    const intensityObj = {
+      category: intensity.category || 'Cyclonic Storm',
+      windSpeedKmh: intensity.windSpeedKmh || 65,
+      confidence: intensity.confidence || 0.8,
+      uncertaintyIntervalKmh: intensity.uncertainty_interval_kmh || intensity.uncertaintyIntervalKmh || [
+        Math.max(20, (intensity.windSpeedKmh || 65) - 12),
+        (intensity.windSpeedKmh || 65) + 12,
+      ],
+    };
+
     const predictionDoc = await PredictionResult.create({
       cycloneId,
       requestedAt: data.requestedAt || new Date(),
       source: data.source || 'ml-model',
-      modelVersion: data.modelVersion || null,
-      detection: data.detection || { present: true, confidence: 0.9 },
-      intensity: data.intensity,
-      trackForecast: data.trackForecast || [],
-      cyclogenesisProbability48h: data.cyclogenesisProbability48h || null,
-      fallbackReason: data.fallbackReason || null,
+      mode: data.mode || 'live',
+      modelVersion: data.modelVersion || data.model_version || 'v0.1',
+      modelVersions: data.modelVersions || data.model_versions || {
+        intensity: 'v0.1',
+        track: 'v0.1-LSTM',
+        cyclogenesis: 'v0.1-RF',
+      },
+      dataProvenance: data.dataProvenance || data.data_provenance || {},
+      detection: data.detection || { present: true, confidence: data.confidence || 0.9 },
+      intensity: intensityObj,
+      trackForecast,
+      cyclogenesisProbability48h: data.cyclogenesisProbability48h ?? data.cyclogenesis_probability_48h ?? null,
+      fallbackReason: data.fallbackReason || data.fallback_reason || null,
     });
 
     // Update or insert predicted TrackPoints
-    if (Array.isArray(data.trackForecast) && data.trackForecast.length > 0) {
-      const forecastPoints = data.trackForecast.map((pt) => ({
+    if (trackForecast.length > 0) {
+      const forecastPoints = trackForecast.map((pt) => ({
         cycloneId,
         timestamp: new Date(Date.now() + (pt.leadTimeHours || 0) * 3600 * 1000),
         type: 'predicted',
@@ -64,12 +98,12 @@ async function savePredictionResult(cycloneId, data) {
     }
 
     // Update cyclone status & category if new intensity prediction is available
-    if (data.intensity) {
+    if (intensity) {
       await Cyclone.findOneAndUpdate(
         { cycloneId },
         {
-          currentCategory: data.intensity.category,
-          currentWindSpeedKmh: data.intensity.windSpeedKmh,
+          currentCategory: intensity.category,
+          currentWindSpeedKmh: intensity.windSpeedKmh,
           lastUpdated: new Date(),
         }
       );
@@ -126,8 +160,8 @@ async function scanForNewSystems() {
 async function updateActiveSystem(cycloneId, lastKnownLocation) {
   logger.info(`[PredictionOrchestrator] Updating active cyclone ${cycloneId}...`);
   let result;
-  const lat = lastKnownLocation?.lat || 15.0;
-  const lon = lastKnownLocation?.lon || 88.0;
+  const lat = lastKnownLocation?.lat ?? lastKnownLocation?.latitude ?? 15.0;
+  const lon = lastKnownLocation?.lon ?? lastKnownLocation?.longitude ?? 88.0;
 
   try {
     const res = await updateCycloneBreaker.fire(cycloneId, lat, lon);

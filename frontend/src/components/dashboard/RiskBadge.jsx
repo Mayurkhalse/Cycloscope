@@ -7,7 +7,7 @@ export const RiskBadge = ({ riskLevel = 'Moderate', size = 'md' }) => {
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 font-bold rounded-md border ${px} ${style.bg} ${style.text} ${style.border}`}
+      className={`inline-flex items-center gap-1.5 font-bold rounded-lg border ${px} ${style.bg} ${style.text} ${style.border} shadow-xs`}
     >
       <span className={`w-1.5 h-1.5 rounded-full ${style.dot} animate-pulse`} />
       {riskLevel} Risk

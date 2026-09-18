@@ -64,6 +64,7 @@ router.get(
  *       404:
  *         description: Cyclone not found
  */
+router.get('/:cycloneId/satellite-image', cycloneController.getSatelliteImage);
 router.get('/:cycloneId', cycloneController.getCycloneById);
 
 module.exports = router;

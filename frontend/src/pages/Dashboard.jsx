@@ -7,6 +7,7 @@ import { ActiveSystemsList } from '../components/dashboard/ActiveSystemsList';
 import { StatsStrip } from '../components/dashboard/StatsStrip';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { ErrorState } from '../components/common/ErrorState';
+import { RefreshCw } from 'lucide-react';
 
 export const Dashboard = () => {
   const { systems, isLoading, isError, systemStatus, refetch } = useActiveSystems();
@@ -41,13 +42,24 @@ export const Dashboard = () => {
         {/* Full-width Map View (2 Cols on Desktop) */}
         <div className="lg:col-span-2 space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-              <span>Live Synoptic Map</span>
-              <span className="text-xs font-normal text-slate-400">North Indian Ocean (Bay of Bengal & Arabian Sea)</span>
-            </h2>
+            <div className="flex items-center gap-3">
+              <h2 className="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                <span>Live Synoptic Basin Map</span>
+                <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                  North Indian Ocean
+                </span>
+              </h2>
+              <button
+                onClick={() => refetch()}
+                className="p-1.5 text-slate-500 hover:text-ocean-700 hover:bg-slate-100 rounded-lg transition"
+                title="Refresh live feeds"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+              </button>
+            </div>
             {selectedCyclone && (
-              <span className="text-xs px-2.5 py-1 rounded bg-slate-800 text-cyan-400 font-mono border border-slate-700">
-                Selected: {selectedCyclone.name} ({selectedCyclone.category})
+              <span className="text-xs px-2.5 py-1 rounded-lg bg-white text-ocean-800 font-bold border border-slate-200 shadow-xs">
+                Active: {selectedCyclone.name} ({selectedCyclone.category})
               </span>
             )}
           </div>
@@ -56,7 +68,7 @@ export const Dashboard = () => {
             cyclones={systems}
             selectedCyclone={selectedCyclone}
             cyclogenesisDisturbances={disturbances}
-            className="h-[550px] w-full rounded-2xl border border-slate-800 shadow-2xl overflow-hidden"
+            className="h-[550px] w-full rounded-2xl border border-slate-200/90 shadow-card overflow-hidden"
           />
         </div>
 

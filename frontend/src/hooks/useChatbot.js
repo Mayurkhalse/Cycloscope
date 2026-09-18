@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { sendChatMessage } from '../api/chatbot.api';
+import { sendChatMessage, clearRemoteChatSession } from '../api/chatbot.api';
 
 export const useChatbot = () => {
   const [messages, setMessages] = useState([
@@ -48,6 +48,7 @@ export const useChatbot = () => {
   };
 
   const clearChat = () => {
+    clearRemoteChatSession();
     setMessages([
       {
         id: 'welcome-1',

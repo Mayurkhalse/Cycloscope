@@ -1,0 +1,26 @@
+{
+  "model_type": "Calibrated Random Forest Classifier",
+  "version": "v0.1-RF",
+  "dataset_samples": 5000,
+  "test_roc_auc": 0.8176,
+  "test_brier_score": 0.169,
+  "test_precision": 0.7831,
+  "test_recall": 0.8134,
+  "test_f1_score": 0.798,
+  "feature_importances": {
+    "sea_surface_temp_c": 0.7029,
+    "vertical_wind_shear_knots": 0.0875,
+    "mid_troposphere_rh": 0.0584,
+    "vorticity_850hpa": 0.0677,
+    "sea_level_pressure_hpa": 0.0518,
+    "basin": 0.0317
+  },
+  "features": [
+    "sea_surface_temp_c",
+    "vertical_wind_shear_knots",
+    "mid_troposphere_rh",
+    "vorticity_850hpa",
+    "sea_level_pressure_hpa",
+    "basin"
+  ]
+}

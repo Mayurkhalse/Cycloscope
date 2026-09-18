@@ -87,10 +87,19 @@ async function predictCyclogenesis(region, features = {}) {
   });
 }
 
+async function getSatelliteFrame(cycloneId, params = {}) {
+  const url = `/live/satellite-frame/${cycloneId}`;
+  return client.get(url, {
+    params,
+    responseType: 'arraybuffer',
+  });
+}
+
 module.exports = {
   checkHealth,
   scanRegions,
   updateCyclone,
   predictIntensity,
   predictCyclogenesis,
+  getSatelliteFrame,
 };

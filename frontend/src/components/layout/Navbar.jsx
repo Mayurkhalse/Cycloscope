@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Activity, Shield, Map, Eye, BookOpen, MessageSquare, Menu } from 'lucide-react';
+import { Activity, Shield, Map, Eye, BookOpen, MessageSquare, Menu, Bot } from 'lucide-react';
 import { useUIStore } from '../../store/uiStore';
 import { useActiveSystems } from '../../hooks/useActiveSystems';
 
@@ -12,56 +12,55 @@ export const Navbar = () => {
     const status = systemStatus?.status || 'green';
     if (status === 'green') {
       return (
-        <span className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-950/80 border border-emerald-500/40 rounded-full text-xs text-emerald-400 font-medium">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-          <span className="w-2 h-2 rounded-full bg-emerald-400 -ml-3.5" />
+        <span className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-full text-xs text-emerald-700 font-semibold shadow-xs">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           ML Live
         </span>
       );
     } else if (status === 'amber') {
       return (
-        <span className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-950/80 border border-amber-500/40 rounded-full text-xs text-amber-400 font-medium" title="Statistical Fallback Active">
-          <span className="w-2 h-2 rounded-full bg-amber-400" />
+        <span className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 rounded-full text-xs text-amber-700 font-semibold shadow-xs" title="Statistical Fallback Active">
+          <span className="w-2 h-2 rounded-full bg-amber-500" />
           Fallback Mode
         </span>
       );
     }
     return (
-      <span className="flex items-center gap-1.5 px-2.5 py-1 bg-rose-950/80 border border-rose-500/40 rounded-full text-xs text-rose-400 font-medium">
-        <span className="w-2 h-2 rounded-full bg-rose-400" />
+      <span className="flex items-center gap-1.5 px-3 py-1 bg-rose-50 border border-rose-200 rounded-full text-xs text-rose-700 font-semibold shadow-xs">
+        <span className="w-2 h-2 rounded-full bg-rose-500" />
         Offline
       </span>
     );
   };
 
   const navLinkClass = ({ isActive }) =>
-    `flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+    `flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
       isActive
-        ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm shadow-cyan-500/10'
-        : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
+        ? 'bg-ocean-50 text-ocean-700 border border-ocean-200 shadow-xs'
+        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
     }`;
 
   return (
-    <header className="sticky top-0 z-40 bg-ocean-950/90 border-b border-slate-800/80 backdrop-blur-md">
+    <header className="sticky top-0 z-40 bg-white/95 border-b border-slate-200/80 backdrop-blur-md shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Brand Logo & Title */}
         <div className="flex items-center gap-3">
           <button
             onClick={toggleSidebar}
-            className="md:hidden p-2 text-slate-400 hover:text-white rounded-lg"
+            className="md:hidden p-2 text-slate-600 hover:text-slate-900 rounded-xl hover:bg-slate-100"
           >
             <Menu className="w-5 h-5" />
           </button>
           <NavLink to="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-ocean-600 to-teal-500 flex items-center justify-center shadow-md shadow-ocean-600/20 group-hover:scale-105 transition-transform">
               <Activity className="w-5 h-5 text-white" />
             </div>
             <div>
-              <div className="font-bold text-sm sm:text-base text-slate-100 tracking-tight flex items-center gap-2">
+              <div className="font-extrabold text-sm sm:text-base text-slate-900 tracking-tight flex items-center gap-2">
                 NIO Cyclone Intel
-                <span className="hidden sm:inline-block text-[10px] px-1.5 py-0.5 bg-slate-800 border border-slate-700 text-cyan-400 rounded font-mono">v1.0</span>
+                <span className="hidden sm:inline-block text-[10px] px-1.5 py-0.5 bg-slate-100 border border-slate-200 text-ocean-700 rounded font-mono font-semibold">v1.0</span>
               </div>
-              <div className="text-[10px] text-slate-400 hidden sm:block">
+              <div className="text-[10px] text-slate-500 hidden sm:block font-medium">
                 Bay of Bengal & Arabian Sea Decision Support
               </div>
             </div>
@@ -82,26 +81,57 @@ export const Navbar = () => {
             <Shield className="w-3.5 h-3.5" />
             Cyclogenesis Watch
           </NavLink>
+          <NavLink to="/chat" className={navLinkClass}>
+            <Bot className="w-3.5 h-3.5" />
+            AI Assistant
+          </NavLink>
           <NavLink to="/about" className={navLinkClass}>
             <BookOpen className="w-3.5 h-3.5" />
             Methodology
           </NavLink>
         </nav>
 
-        {/* Right Status & Actions */}
+        {/* Right Status, Mode Switcher & Quick Drawer Toggle */}
         <div className="flex items-center gap-3">
+          {/* Mode Switcher Pill */}
+          <div className="hidden lg:flex items-center p-0.5 bg-slate-100 border border-slate-200 rounded-xl text-xs font-semibold shadow-inner">
+            <button
+              onClick={() => useUIStore.getState().setSystemMode('live')}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg transition-all ${
+                useUIStore((s) => s.systemMode) === 'live'
+                  ? 'bg-white text-emerald-700 shadow-xs font-bold'
+                  : 'text-slate-500 hover:text-slate-900'
+              }`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${useUIStore((s) => s.systemMode) === 'live' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+              Live Mode
+            </button>
+            <button
+              onClick={() => useUIStore.getState().setSystemMode('replay')}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg transition-all ${
+                useUIStore((s) => s.systemMode) === 'replay'
+                  ? 'bg-white text-indigo-700 shadow-xs font-bold'
+                  : 'text-slate-500 hover:text-slate-900'
+              }`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${useUIStore((s) => s.systemMode) === 'replay' ? 'bg-indigo-500' : 'bg-slate-400'}`} />
+              Replay Mode
+            </button>
+          </div>
+
           {getStatusIndicator()}
-          
+
           <button
             onClick={toggleChat}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-xs ${
               isChatOpen
-                ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/30'
-                : 'bg-slate-800 text-cyan-400 hover:bg-slate-700 border border-slate-700'
+                ? 'bg-ocean-600 text-white shadow-md shadow-ocean-600/25'
+                : 'bg-white text-ocean-700 hover:bg-ocean-50 border border-ocean-200'
             }`}
+            title="Toggle Floating Assistant Panel"
           >
             <MessageSquare className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">AI Assistant</span>
+            <span>Quick Chat</span>
           </button>
         </div>
       </div>

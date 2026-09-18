@@ -55,4 +55,21 @@ router.get('/:cycloneId/latest', predictionController.getLatestPrediction);
  */
 router.get('/:cycloneId/history', predictionController.getPredictionHistory);
 
+/**
+ * @openapi
+ * /predictions/{cycloneId}/track:
+ *   get:
+ *     summary: Retrieve historical and predicted track coordinates for mapping
+ *     tags: [Predictions]
+ *     parameters:
+ *       - in: path
+ *         name: cycloneId
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: Track coordinates and metadata
+ */
+router.get('/:cycloneId/track', predictionController.getPredictionTrack);
+
 module.exports = router;

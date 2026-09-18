@@ -1,0 +1,75 @@
+{
+  "timestamp": "2026-09-07 17:37:38.759968",
+  "version": "v0.1",
+  "device": "cuda",
+  "train_samples": 33166,
+  "val_samples": 7107,
+  "test_samples": 7108,
+  "final_metrics": {
+    "test_mae_kmh": 0.07,
+    "test_rmse_kmh": 0.07,
+    "best_val_mae_kmh": 0.07
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 1084.0825,
+      "val_mae_kmh": 3.51,
+      "val_loss": 12.3783
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.8112,
+      "val_mae_kmh": 0.35,
+      "val_loss": 0.1357
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.0026,
+      "val_mae_kmh": 0.22,
+      "val_loss": 0.0518
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.0006,
+      "val_mae_kmh": 0.16,
+      "val_loss": 0.0247
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.0003,
+      "val_mae_kmh": 0.15,
+      "val_loss": 0.0217
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.0002,
+      "val_mae_kmh": 0.17,
+      "val_loss": 0.0286
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.0001,
+      "val_mae_kmh": 0.11,
+      "val_loss": 0.0127
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.0001,
+      "val_mae_kmh": 0.07,
+      "val_loss": 0.0045
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.0,
+      "val_mae_kmh": 0.1,
+      "val_loss": 0.0098
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.0,
+      "val_mae_kmh": 0.11,
+      "val_loss": 0.0129
+    }
+  ]
+}

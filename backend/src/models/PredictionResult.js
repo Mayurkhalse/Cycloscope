@@ -18,9 +18,23 @@ const predictionResultSchema = new mongoose.Schema(
       enum: ['ml-model', 'fallback-climatology'],
       default: 'ml-model',
     },
+    mode: {
+      type: String,
+      enum: ['live', 'replay', 'historical_replay', 'fallback'],
+      default: 'live',
+    },
     modelVersion: {
       type: String,
       default: null, // null if fallback
+    },
+    modelVersions: {
+      intensity: { type: String, default: 'v0.1' },
+      track: { type: String, default: 'v0.1-LSTM' },
+      cyclogenesis: { type: String, default: 'v0.1-RF' },
+    },
+    dataProvenance: {
+      satellite: { type: mongoose.Schema.Types.Mixed, default: {} },
+      environment: { type: mongoose.Schema.Types.Mixed, default: {} },
     },
     detection: {
       present: { type: Boolean, default: true },
@@ -30,6 +44,7 @@ const predictionResultSchema = new mongoose.Schema(
       category: { type: String, required: true },
       windSpeedKmh: { type: Number, required: true },
       confidence: { type: Number, min: 0, max: 1, default: 0.8 },
+      uncertaintyIntervalKmh: [{ type: Number }],
     },
     trackForecast: [
       {
@@ -50,7 +65,6 @@ const predictionResultSchema = new mongoose.Schema(
     },
     fallbackReason: {
       type: String,
-      enum: ['ingestion-failure', 'model-failure', null],
       default: null,
     },
   },

@@ -1,28 +1,28 @@
 import L from 'leaflet';
 
-// Generate Leaflet SVG div icon based on storm category
+// Generate Leaflet SVG div icon based on storm category with crisp drop shadow on light maps
 export const createCycloneIcon = (category, isSelected = false) => {
-  let color = '#38bdf8'; // Cyan default
+  let color = '#0284c7'; // Sky / Blue default
   let pulseClass = '';
 
   if (category === 'VSCS' || category === 'ESCS' || category === 'SuCS' || category === 'Severe') {
-    color = '#f43f5e'; // Rose / Crimson
+    color = '#e11d48'; // Rose / Crimson
     pulseClass = 'cyclone-marker-pulse';
   } else if (category === 'SCS' || category === 'High') {
-    color = '#f97316'; // Orange
+    color = '#ea580c'; // Orange
   } else if (category === 'CS' || category === 'Moderate') {
-    color = '#f59e0b'; // Amber
+    color = '#d97706'; // Amber
   } else {
-    color = '#10b981'; // Emerald
+    color = '#059669'; // Emerald
   }
 
-  const borderStyle = isSelected ? 'ring-4 ring-cyan-400 scale-125' : '';
+  const borderStyle = isSelected ? 'ring-4 ring-ocean-500 scale-125' : 'hover:scale-110';
 
   const html = `
-    <div class="relative flex items-center justify-center w-8 h-8 ${borderStyle}">
-      <div class="absolute w-8 h-8 rounded-full opacity-30 ${pulseClass}" style="background-color: ${color}"></div>
-      <div class="w-6 h-6 rounded-full border-2 border-white/80 flex items-center justify-center shadow-lg" style="background-color: ${color}">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white animate-spin" style="animation-duration: 6s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <div class="relative flex items-center justify-center w-8 h-8 transition-transform ${borderStyle}">
+      <div class="absolute w-8 h-8 rounded-full opacity-35 ${pulseClass}" style="background-color: ${color}"></div>
+      <div class="w-6 h-6 rounded-full border-2 border-white flex items-center justify-center shadow-lg" style="background-color: ${color}">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-white animate-spin" style="animation-duration: 6s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
         </svg>
       </div>

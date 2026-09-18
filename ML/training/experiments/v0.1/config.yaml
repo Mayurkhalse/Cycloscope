@@ -1,0 +1,22 @@
+# Training Hyperparameter Configuration - Intensity Estimation (v0.1)
+task: "intensity_regressor"
+version: "v0.1"
+
+data:
+  dataset: "TCIR-Bootstrap"
+  h5_path: "data/raw/tcir/TCIR-ALL_2017.h5"
+  splits_dir: "data/splits"
+  channels:
+    - "IR"
+  train_end_year: 2015
+  val_end_year: 2016
+
+training:
+  batch_size: 16
+  lr: 0.0001
+  epochs: 10
+  early_stopping_patience: 3
+  device: "auto"
+
+export:
+  dest_dir: "../serving/model_artifacts/v0.1"
