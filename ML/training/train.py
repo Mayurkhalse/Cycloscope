@@ -108,6 +108,28 @@ def main():
     
     print(f"Dataset partitions loaded: Train samples={len(train_ds)}, Val samples={len(val_ds)}, Test samples={len(test_ds)}")
     
+    # [DATA Persistence Hook] Save storm/sample split partition summary
+    import pandas as pd
+    project_root = Path(__file__).resolve().parents[2]
+    processed_dir = project_root / "data" / "processed"
+    processed_dir.mkdir(parents=True, exist_ok=True)
+    splits_records = []
+    if is_npy_dataset:
+        for idx in train_part: splits_records.append({"sample_index": idx, "split": "train"})
+        for idx in val_part: splits_records.append({"sample_index": idx, "split": "validation"})
+        for idx in test_part: splits_records.append({"sample_index": idx, "split": "test"})
+    else:
+        for s in (train_ids or []): splits_records.append({"storm_id": s, "split": "train"})
+        for s in (val_ids or []): splits_records.append({"storm_id": s, "split": "validation"})
+        for s in (test_ids or []): splits_records.append({"storm_id": s, "split": "test"})
+    df_splits = pd.DataFrame(splits_records)
+    splits_csv = processed_dir / "intensity_tcir_splits.csv"
+    df_splits.to_csv(splits_csv, index=False)
+    print(f"[DATA] Saved split dataset:")
+    print(f"       Rows: {len(df_splits):,}")
+    print(f"       Columns: {df_splits.shape[1]}")
+    print(f"       Path: {splits_csv.relative_to(project_root)}")
+    
     # Step 6: Train ResNet-18 Intensity Regressor
     print("[Step 6/9] Initializing Model & Device...")
     device = "cuda" if torch.cuda.is_available() else "cpu"

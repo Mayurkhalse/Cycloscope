@@ -80,12 +80,36 @@ def generate_environmental_genesis_dataset(n_samples: int = 5000, seed: int = 42
         "sea_level_pressure_hpa": mslp,
         "cyclogenesis_label": y
     })
+
+    # [DATA Persistence Hook] Save raw synthetic dataset
+    project_root = Path(__file__).resolve().parents[2]
+    raw_syn_dir = project_root / "data" / "raw" / "synthetic"
+    raw_syn_dir.mkdir(parents=True, exist_ok=True)
+    raw_syn_path = raw_syn_dir / "synthetic_environmental_cyclogenesis.csv"
+    df.to_csv(raw_syn_path, index=False)
+    print(f"[DATA] Saved synthetic dataset:")
+    print(f"       Rows: {len(df):,}")
+    print(f"       Columns: {df.shape[1]}")
+    print(f"       Path: {raw_syn_path.relative_to(project_root)}")
+
     return df
 
 def train_and_export():
     print("=== Training Machine Learning Cyclogenesis Model ===")
     df = generate_environmental_genesis_dataset()
     
+    project_root = Path(__file__).resolve().parents[2]
+    processed_dir = project_root / "data" / "processed"
+    processed_dir.mkdir(parents=True, exist_ok=True)
+
+    # [DATA Persistence Hook] Save final processed dataset
+    processed_path = processed_dir / "cyclogenesis_processed.csv"
+    df.to_csv(processed_path, index=False)
+    print(f"[DATA] Saved final processed dataset:")
+    print(f"       Rows: {len(df):,}")
+    print(f"       Columns: {df.shape[1]}")
+    print(f"       Path: {processed_path.relative_to(project_root)}")
+
     feature_cols = [
         "sea_surface_temp_c",
         "vertical_wind_shear_knots",
@@ -99,6 +123,25 @@ def train_and_export():
     y = df["cyclogenesis_label"]
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42, stratify=y)
+    
+    # [DATA Persistence Hook] Save train and test split datasets
+    train_split_df = X_train.copy()
+    train_split_df["cyclogenesis_label"] = y_train
+    train_split_path = processed_dir / "cyclogenesis_train.csv"
+    train_split_df.to_csv(train_split_path, index=False)
+    print(f"[DATA] Saved train split dataset:")
+    print(f"       Rows: {len(train_split_df):,}")
+    print(f"       Columns: {train_split_df.shape[1]}")
+    print(f"       Path: {train_split_path.relative_to(project_root)}")
+
+    test_split_df = X_test.copy()
+    test_split_df["cyclogenesis_label"] = y_test
+    test_split_path = processed_dir / "cyclogenesis_test.csv"
+    test_split_df.to_csv(test_split_path, index=False)
+    print(f"[DATA] Saved test split dataset:")
+    print(f"       Rows: {len(test_split_df):,}")
+    print(f"       Columns: {test_split_df.shape[1]}")
+    print(f"       Path: {test_split_path.relative_to(project_root)}")
     
     # Train Random Forest
     base_rf = RandomForestClassifier(

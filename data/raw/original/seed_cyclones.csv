@@ -1,0 +1,9 @@
+cycloneId,name,basin,season,status,category,windSpeedKmh,pressureHpa,lat,lon,source
+IO_2026_03,Remal,Bay of Bengal,2026,active,Severe Cyclonic Storm,115,980,18.5,88.8,live-feed
+IO_2026_02,Tej,Arabian Sea,2026,active,Very Severe Cyclonic Storm,155,978,14.8,56.4,live-feed
+IO_2026_01,Asna,Arabian Sea,2026,active,Deep Depression,65,994,23.2,67.5,live-feed
+IO_2026_04,Dana,Bay of Bengal,2026,active,Cyclonic Storm,85,988,16.2,89.1,live-feed
+IO_2023_02,Biparjoy,Arabian Sea,2023,historical,Extremely Severe Cyclonic Storm,165,954,23.2,68.6,IBTrACS
+IO_2023_01,Mocha,Bay of Bengal,2023,historical,Extremely Severe Cyclonic Storm,215,938,20.1,92.8,IBTrACS
+IO_2021_01,Tauktae,Arabian Sea,2021,historical,Extremely Severe Cyclonic Storm,220,950,20.8,71.1,IBTrACS
+IO_2020_01,Amphan,Bay of Bengal,2020,historical,Super Cyclonic Storm,260,920,21.7,88.3,IBTrACS

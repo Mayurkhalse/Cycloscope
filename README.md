@@ -214,6 +214,76 @@ MOSDAC_PRODUCT=3D_IMG_L1B_STD
 
 ---
 
+## 📁 Data Pipeline & Dataset Organization
+
+CycoScope organizes all its raw, synthetic, and final processed datasets within a dedicated `data/` directory:
+
+```text
+data/
+├── raw/
+│   ├── original/              # Authentic observational and historical datasets
+│   │   ├── ibtracs_nio_full.csv
+│   │   ├── tcir_metadata.csv
+│   │   ├── climatology_monthly_profiles.csv
+│   │   └── seed_cyclones.csv
+│   │
+│   └── synthetic/             # Algorithmic simulations modeling physical atmospheric dynamics
+│       ├── synthetic_environmental_cyclogenesis.csv
+│       └── synthetic_cyclone_tracks.csv
+│
+├── processed/                 # Cleaned features and train/test/validation partitions
+│   ├── ibtracs_nio_cleaned.csv
+│   ├── cyclogenesis_processed.csv
+│   ├── cyclogenesis_train.csv
+│   ├── cyclogenesis_test.csv
+│   ├── track_sequences_processed.csv
+│   ├── track_train_sequences.csv
+│   ├── track_val_sequences.csv
+│   └── intensity_tcir_splits.csv
+│
+└── README.md                  # Comprehensive dataset schema reference
+```
+
+### Dataset Categories & Provenance
+
+1. **Real / Source Data (`data/raw/original/`):**
+   - `ibtracs_nio_full.csv`: 60,678 historical storm fixes from NOAA NCEI IBTrACS for the North Indian Ocean basin (1842–2024).
+   - `tcir_metadata.csv`: Ground-truth best track labels from the TCIR benchmark dataset.
+   - `climatology_monthly_profiles.csv`: Monthly baseline translational speed and bearing vectors for Bay of Bengal and Arabian Sea.
+   - `seed_cyclones.csv`: Reference storm definitions for live testing and initialization.
+
+2. **Synthetic / Generated Data (`data/raw/synthetic/`):**
+   > **Notice:** Synthetic datasets are generated algorithmically by the CycoScope data pipeline to model physical atmospheric relationships. **They are simulations and must not be represented as real-world observational measurements.**
+   - `synthetic_environmental_cyclogenesis.csv`: 5,000 synthetic atmospheric soundings modeling Gray's Genesis Potential Index (SST, vertical wind shear, mid-tropospheric relative humidity, vorticity, and sea level pressure).
+   - `synthetic_cyclone_tracks.csv`: 600 synthetic multi-timestep storm track fixes (20 storms × 30 timesteps) modeling northwestward progression and intensity curves.
+
+3. **Processed Data (`data/processed/`):**
+   - `cyclogenesis_processed.csv`: The final feature-engineered dataset combining environmental predictors with genesis ground truth.
+   - `cyclogenesis_train.csv` & `cyclogenesis_test.csv`: 75%/25% stratified splits used for training and evaluating the Calibrated Random Forest model.
+   - `track_sequences_processed.csv`: The final temporal sequence dataset mapping 8-timestep historical observation windows to multi-horizon targets (+6h, +12h, +24h).
+   - `track_train_sequences.csv` & `track_val_sequences.csv`: 80%/20% partitions used for training the PyTorch TrackForecaster LSTM.
+   - `ibtracs_nio_cleaned.csv`: Cleaned historical records with IMD classifications.
+   - `intensity_tcir_splits.csv`: Storm-level temporal split indices (33,166 train, 7,107 val, 7,108 test).
+
+### How to Regenerate the Datasets
+All generation scripts use fixed seeds (`seed=42`) and are **100% deterministic**:
+
+```powershell
+# Export original raw datasets & reference records
+python ML/training/src/data_acquisition/export_dataset_registry.py
+
+# Regenerate cyclogenesis synthetic soundings, processed data & splits
+python ML/training/train_cyclogenesis.py
+
+# Regenerate synthetic cyclone tracks, processed sequences & splits
+python ML/training/train_track.py
+
+# Regenerate intensity split partitions
+python ML/training/train.py --epochs 1
+```
+
+---
+
 ## ⚠️ Disclaimer & Operational Notice
 
 *This platform is an AI-assisted research and decision-support prototype. For life-safety, disaster response, evacuation planning, and official meteorological warnings, always refer directly to bulletins issued by the **India Meteorological Department (IMD / RSMC New Delhi)** at [mausam.imd.gov.in](https://mausam.imd.gov.in).*

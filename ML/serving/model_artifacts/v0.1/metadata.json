@@ -1,11 +1,11 @@
 {
   "model_name": "intensity_regressor",
   "version": "v0.1",
-  "trained_on": "2026-09-07",
+  "trained_on": "2026-09-18",
   "train_storms": 33166,
   "val_mae_kmh": 0.0,
-  "test_mae_kmh": 0.07,
-  "test_rmse_kmh": 0.07,
+  "test_mae_kmh": 0.55,
+  "test_rmse_kmh": 0.6,
   "data_source": "kaggle/kbdharun/tropical-cyclone-intensity-regression",
   "channels": [
     "IR"

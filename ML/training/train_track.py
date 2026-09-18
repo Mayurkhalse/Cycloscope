@@ -44,7 +44,20 @@ def generate_synthetic_storm_tracks(num_storms: int = 15, timesteps_per_storm: i
                 "year": 2020
             })
             
-    return pd.DataFrame(records)
+    df = pd.DataFrame(records)
+
+    # [DATA Persistence Hook] Save raw synthetic dataset
+    project_root = Path(__file__).resolve().parents[2]
+    raw_syn_dir = project_root / "data" / "raw" / "synthetic"
+    raw_syn_dir.mkdir(parents=True, exist_ok=True)
+    raw_syn_path = raw_syn_dir / "synthetic_cyclone_tracks.csv"
+    df.to_csv(raw_syn_path, index=False)
+    print(f"[DATA] Saved synthetic dataset:")
+    print(f"       Rows: {len(df):,}")
+    print(f"       Columns: {df.shape[1]}")
+    print(f"       Path: {raw_syn_path.relative_to(project_root)}")
+
+    return df
 
 def train_track_model(epochs: int = 10, batch_size: int = 4, lr: float = 1e-3, version: str = "v0.1"):
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -54,11 +67,64 @@ def train_track_model(epochs: int = 10, batch_size: int = 4, lr: float = 1e-3, v
     df = generate_synthetic_storm_tracks(num_storms=20, timesteps_per_storm=30)
     sequences = build_sequences(df, window=8, horizon_steps=(2, 4, 8))
     print(f"Constructed {len(sequences)} multi-horizon sequence samples.")
+
+    # [DATA Persistence Hook] Save processed sequence dataset
+    project_root = Path(__file__).resolve().parents[2]
+    processed_dir = project_root / "data" / "processed"
+    processed_dir.mkdir(parents=True, exist_ok=True)
     
+    seq_records = []
+    for s_idx, seq in enumerate(sequences):
+        past_df = seq["past"]
+        t2 = seq["targets"][2]
+        t4 = seq["targets"][4]
+        t8 = seq["targets"][8]
+        seq_records.append({
+            "sample_index": s_idx,
+            "storm_id": seq["storm_id"],
+            "window_start": str(past_df.iloc[0]["timestamp"]),
+            "window_end": str(past_df.iloc[-1]["timestamp"]),
+            "current_lat": float(past_df.iloc[-1]["lat"]),
+            "current_lon": float(past_df.iloc[-1]["lon"]),
+            "current_wind_kmh": float(past_df.iloc[-1]["wind_kmh"]),
+            "target_6h_lat": float(t2["lat"]),
+            "target_6h_lon": float(t2["lon"]),
+            "target_6h_wind_kmh": float(t2["wind_kmh"]),
+            "target_12h_lat": float(t4["lat"]),
+            "target_12h_lon": float(t4["lon"]),
+            "target_12h_wind_kmh": float(t4["wind_kmh"]),
+            "target_24h_lat": float(t8["lat"]),
+            "target_24h_lon": float(t8["lon"]),
+            "target_24h_wind_kmh": float(t8["wind_kmh"]),
+        })
+    df_seq = pd.DataFrame(seq_records)
+    processed_seq_path = processed_dir / "track_sequences_processed.csv"
+    df_seq.to_csv(processed_seq_path, index=False)
+    print(f"[DATA] Saved final processed dataset:")
+    print(f"       Rows: {len(df_seq):,}")
+    print(f"       Columns: {df_seq.shape[1]}")
+    print(f"       Path: {processed_seq_path.relative_to(project_root)}")
+
     dataset = CycloneSequenceDataset(sequences, embedding_dim=512)
     train_size = int(0.8 * len(dataset))
     val_size = len(dataset) - train_size
     train_ds, val_ds = torch.utils.data.random_split(dataset, [train_size, val_size])
+    
+    # [DATA Persistence Hook] Save train and validation sequence splits
+    train_seq_df = df_seq.iloc[:train_size]
+    val_seq_df = df_seq.iloc[train_size:]
+    train_seq_path = processed_dir / "track_train_sequences.csv"
+    val_seq_path = processed_dir / "track_val_sequences.csv"
+    train_seq_df.to_csv(train_seq_path, index=False)
+    val_seq_df.to_csv(val_seq_path, index=False)
+    print(f"[DATA] Saved train split dataset:")
+    print(f"       Rows: {len(train_seq_df):,}")
+    print(f"       Columns: {train_seq_df.shape[1]}")
+    print(f"       Path: {train_seq_path.relative_to(project_root)}")
+    print(f"[DATA] Saved validation split dataset:")
+    print(f"       Rows: {len(val_seq_df):,}")
+    print(f"       Columns: {val_seq_df.shape[1]}")
+    print(f"       Path: {val_seq_path.relative_to(project_root)}")
     
     train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False)

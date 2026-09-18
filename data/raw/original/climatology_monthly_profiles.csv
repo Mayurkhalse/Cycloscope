@@ -1,0 +1,25 @@
+basin,month,avgWindSpeedKmh,avgPressureHpa,avgTrackBearingDeg,avgTrackSpeedKmh,sampleSize
+Bay of Bengal,1,65,996,325,12,30
+Bay of Bengal,2,65,996,325,12,30
+Bay of Bengal,3,65,996,325,12,30
+Bay of Bengal,4,95,984,325,16,75
+Bay of Bengal,5,95,984,325,16,75
+Bay of Bengal,6,65,996,325,12,30
+Bay of Bengal,7,65,996,325,12,30
+Bay of Bengal,8,65,996,325,12,30
+Bay of Bengal,9,65,996,325,12,30
+Bay of Bengal,10,95,984,305,16,75
+Bay of Bengal,11,95,984,305,16,75
+Bay of Bengal,12,95,984,305,16,75
+Arabian Sea,1,60,998,300,11,20
+Arabian Sea,2,60,998,300,11,20
+Arabian Sea,3,60,998,300,11,20
+Arabian Sea,4,60,998,300,11,20
+Arabian Sea,5,85,988,300,14,45
+Arabian Sea,6,85,988,300,14,45
+Arabian Sea,7,60,998,300,11,20
+Arabian Sea,8,60,998,300,11,20
+Arabian Sea,9,60,998,300,11,20
+Arabian Sea,10,85,988,300,14,45
+Arabian Sea,11,85,988,300,14,45
+Arabian Sea,12,60,998,300,11,20
