@@ -119,7 +119,7 @@ export const AuthGateway = () => {
           <div>
             <div className="flex items-center gap-2">
               <span className="font-extrabold text-base sm:text-lg tracking-tight text-white flex items-center gap-2">
-                NIO Cyclone Intel
+                cycloscope
                 <span className="text-[10px] px-2 py-0.5 bg-teal-500/20 text-teal-300 border border-teal-500/30 rounded-full font-mono uppercase tracking-wider">
                   Operational Portal
                 </span>

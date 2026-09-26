@@ -3,7 +3,7 @@ import { useHistoricalData } from '../hooks/useHistoricalData';
 import { MapContainer, TileLayer, Polyline, CircleMarker, Tooltip } from 'react-leaflet';
 import { Filter, Search, Eye, CheckSquare, Square, Layers, RefreshCw } from 'lucide-react';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
-import { GLOBAL_MAP_BOUNDS } from '../components/map/MapView';
+import { GLOBAL_MAP_BOUNDS, CARTO_VOYAGER_URL, CARTO_ATTRIBUTION } from '../components/map/MapView';
 
 export const HistoricalExplorer = () => {
   const [basin, setBasin] = useState('All');
@@ -196,8 +196,10 @@ export const HistoricalExplorer = () => {
             className="w-full h-full"
           >
             <TileLayer
-              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-              attribution="&copy; OpenStreetMap &copy; CARTO"
+              url={CARTO_VOYAGER_URL}
+              attribution={CARTO_ATTRIBUTION}
+              subdomains="abcd"
+              maxZoom={19}
               noWrap={true}
               bounds={GLOBAL_MAP_BOUNDS}
             />

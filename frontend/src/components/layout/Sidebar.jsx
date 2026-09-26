@@ -26,28 +26,32 @@ export const Sidebar = () => {
             <div className="w-8 h-8 rounded-lg bg-ocean-600 flex items-center justify-center text-white font-bold shadow-md shadow-ocean-600/20">
               <Activity className="w-5 h-5" />
             </div>
-            <span className="font-extrabold text-slate-900">NIO Cyclone Intel</span>
+            <span className="font-extrabold text-lg text-slate-900 tracking-tight">cycloscope</span>
           </div>
           <button onClick={closeSidebar} className="p-1.5 text-slate-500 hover:text-slate-800 rounded-lg hover:bg-slate-100">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Operator Profile Card in Sidebar */}
+        {/* User Profile Card in Sidebar */}
         {user && (
-          <div className="mb-6 p-3 rounded-xl bg-slate-50 border border-slate-200">
+          <div className="mb-6 p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-ocean-600 text-white font-bold text-xs flex items-center justify-center">
-                {user.avatarInitials}
+              <div className="w-8 h-8 rounded-lg bg-ocean-600 text-white font-bold text-xs flex items-center justify-center">
+                {user.avatarInitials || 'OP'}
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="font-bold text-slate-900 text-xs truncate">{user.name}</div>
-                <div className="text-[10px] text-slate-500 font-mono truncate">{user.callsign}</div>
-              </div>
+              <div className="font-bold text-slate-900 text-xs truncate">{user.name}</div>
             </div>
-            <div className="mt-2 text-[10px] font-semibold text-ocean-700 bg-ocean-50 px-2 py-0.5 rounded border border-ocean-200">
-              {user.roleTitle}
-            </div>
+            <button
+              onClick={() => {
+                closeSidebar();
+                logout();
+              }}
+              className="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 transition"
+              title="Log Out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         )}
 
@@ -84,7 +88,7 @@ export const Sidebar = () => {
               className="w-full py-2 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-semibold text-xs transition flex items-center justify-center gap-2"
             >
               <LogOut className="w-3.5 h-3.5" />
-              <span>Lock Workstation</span>
+              <span>Log Out</span>
             </button>
           )}
           <div className="text-[11px] text-slate-500">

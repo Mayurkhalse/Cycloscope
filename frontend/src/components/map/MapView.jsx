@@ -13,6 +13,13 @@ export const GLOBAL_MAP_BOUNDS = [
   [85.0, 180.0],
 ];
 
+// Authenticated CARTO Basemap configurations
+export const CARTO_API_KEY = import.meta.env.VITE_CARTO_API_KEY || 'cb1_3yvr_1_e12447f6b247bf7f03ac2e2c';
+export const CARTO_VOYAGER_URL = `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=${CARTO_API_KEY}&api_key=${CARTO_API_KEY}`;
+export const CARTO_POSITRON_URL = `https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png?key=${CARTO_API_KEY}&api_key=${CARTO_API_KEY}`;
+export const CARTO_DARK_URL = `https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png?key=${CARTO_API_KEY}&api_key=${CARTO_API_KEY}`;
+export const CARTO_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>';
+
 export const MapView = ({
   cyclones = [],
   selectedCyclone = null,
@@ -21,10 +28,15 @@ export const MapView = ({
   className = 'h-[500px] w-full rounded-2xl overflow-hidden shadow-card border border-slate-200/90',
 }) => {
   const { mapViewport } = useUIStore();
-  const [activeTileType, setActiveTileType] = useState('osm'); // 'osm' | 'topo' | 'ocean'
+  const [activeTileType, setActiveTileType] = useState('carto'); // 'carto' | 'osm' | 'topo' | 'ocean'
 
   // Crisp, high-clarity watermark-free tile providers with high-contrast ocean/land separation
   const tileProviders = {
+    carto: {
+      url: CARTO_VOYAGER_URL,
+      attribution: CARTO_ATTRIBUTION,
+      name: 'CARTO Voyager',
+    },
     osm: {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -42,7 +54,7 @@ export const MapView = ({
     },
   };
 
-  const currentTile = tileProviders[activeTileType] || tileProviders.osm;
+  const currentTile = tileProviders[activeTileType] || tileProviders.carto;
 
   return (
     <div className={`relative ${className} bg-slate-100`}>
@@ -50,7 +62,7 @@ export const MapView = ({
       <div className="absolute top-3 right-3 z-[1000] flex items-center gap-1.5 bg-white/95 border border-slate-200/90 rounded-xl p-1 shadow-card backdrop-blur-md">
         <button
           onClick={() => {
-            const types = ['osm', 'topo', 'ocean'];
+            const types = ['carto', 'osm', 'topo', 'ocean'];
             const nextIdx = (types.indexOf(activeTileType) + 1) % types.length;
             setActiveTileType(types[nextIdx]);
           }}
@@ -80,11 +92,13 @@ export const MapView = ({
         className="w-full h-full"
       >
         <TileLayer
+          key={currentTile.name}
           url={currentTile.url}
           attribution={currentTile.attribution}
+          subdomains="abcd"
           noWrap={true}
           bounds={GLOBAL_MAP_BOUNDS}
-          maxZoom={14}
+          maxZoom={19}
         />
 
         <LayersControl position="bottomleft">
