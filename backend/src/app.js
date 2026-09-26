@@ -12,6 +12,7 @@ const predictionRoutes = require('./routes/prediction.routes');
 const cyclogenesisRoutes = require('./routes/cyclogenesis.routes');
 const chatRoutes = require('./routes/chat.routes');
 const systemRoutes = require('./routes/system.routes');
+const authRoutes = require('./routes/auth.routes');
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
 app.use('/api', apiLimiter);
 
 // API Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/cyclones', cycloneRoutes);
 app.use('/api/predictions', predictionRoutes);
 app.use('/api/cyclogenesis', cyclogenesisRoutes);

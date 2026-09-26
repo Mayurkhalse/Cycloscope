@@ -137,6 +137,39 @@ GET {{backendUrl}}/chat/{{sessionId}}/history
 ### Expected: both the user message and assistant response present, with retrievedContextIds populated.
 
 ### ============================================================
+### STEP 8 — Authentication & RBAC Operator Profiles
+### ============================================================
+
+### 8a. List all certified operator profiles & clearances
+GET {{backendUrl}}/auth/operators
+
+### 8b. Authenticate as Operational Meteorologist
+POST {{backendUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "meteorologist",
+  "password": "password123"
+}
+
+### 8c. Authenticate as Cyclone Research Analyst
+POST {{backendUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "analyst",
+  "password": "password123"
+}
+
+### 8d. Quick 1-click login by role
+POST {{backendUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "role": "coordinator"
+}
+
+### ============================================================
 ### CLEANUP — remove test data when done
 ### ============================================================
 ### mongosh:
